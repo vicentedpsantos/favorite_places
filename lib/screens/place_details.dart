@@ -14,14 +14,18 @@ class PlaceDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(place.title),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Image.file(
+      body: Stack(
+        children: [
+          Hero(
+            tag: place.id,
+            child: Image.file(
               File(place.picturePath),
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
