@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:favorite_places/models/place.dart';
@@ -13,9 +14,13 @@ class PlaceDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(place.title),
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
-          children: [],
+          children: [
+            Image.file(
+              File(place.picturePath),
+            ),
+          ],
         ),
       ),
     );
