@@ -2,14 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
 class LocationInput extends StatefulWidget {
-  const LocationInput({super.key});
+  const LocationInput({required this.onGetLocationData, super.key});
+
+  final void Function(double lat, double lng) onGetLocationData;
 
   @override
   State<LocationInput> createState() => _LocationInputState();
 }
 
 class _LocationInputState extends State<LocationInput> {
+  LocationData? _locationData;
+  var _isGettingLocation = false;
+
   void _getCurrentLocation() async {
+    setState(() {
+      _isGettingLocation = true;
+    });
+
     Location location = Location();
 
     bool serviceEnabled;
@@ -32,11 +41,48 @@ class _LocationInputState extends State<LocationInput> {
       }
     }
 
-    _locationData = await location.getLocation();
+    locationData = await location.getLocation();
+
+    setState(() {
+      _locationData = locationData;
+    });
+
+    widget.onGetLocationData(
+      locationData.latitude!,
+      locationData.longitude!,
+    );
+
+    
+
+    setState(() {
+      _isGettingLocation = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    String locationContent = 'No location chosen';
+
+    if (_locationData != null) {
+      locationContent =
+          'Lat ${_locationData!.latitude} Lng ${_locationData!.longitude}';
+    }
+
+    Widget content = Text(
+      locationContent,
+      textAlign: TextAlign.center,
+      style: Theme.of(context)
+          .textTheme
+          .bodyLarge!
+          .copyWith(color: Theme.of(context).colorScheme.onBackground),
+    );
+
+    if (_isGettingLocation) {
+      content = const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Column(
       children: [
         Container(
@@ -49,14 +95,7 @@ class _LocationInputState extends State<LocationInput> {
               color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
             ),
           ),
-          child: Text(
-            'No location chosen',
-            textAlign: TextAlign.center,
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(color: Theme.of(context).colorScheme.onBackground),
-          ),
+          child: content,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -64,7 +103,7 @@ class _LocationInputState extends State<LocationInput> {
             TextButton.icon(
               icon: const Icon(Icons.location_on),
               label: const Text('Get current location'),
-              onPressed: () {},
+              onPressed: _getCurrentLocation,
             ),
             TextButton.icon(
               icon: const Icon(Icons.map),

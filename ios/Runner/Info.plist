@@ -55,7 +55,5 @@
 	<false/>
   <key>NSLocationWhenInUseUsageDescription</key>
   <string>Permission needed to store location's coordinates</string>
-  <key>UIBackgroundModes</key>
-  <string>location</string>
 </dict>
 </plist>
